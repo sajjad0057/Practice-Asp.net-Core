@@ -2,10 +2,13 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PracticeMVC.Infrastructure;
+using PracticeMVC.Infrastructure.DbContexts;
 using PracticeMVC.Web;
 using PracticeMVC.Web.Data;
 using Serilog;
 using Serilog.Events;
+using System.Reflection;
 
 try
 {
@@ -13,6 +16,8 @@ try
 
     // Add services to the container.
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    var assemblyName = Assembly.GetExecutingAssembly().FullName;
 
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -31,6 +36,8 @@ try
     {
         //// here , can load one /more module that's bind dependency 
         containerBuilder.RegisterModule(new WebModule()); //// it's for Web project dependency binding
+
+        containerBuilder.RegisterModule(new InfrastructureModule(connectionString,assemblyName)); //// it's for Infrastructure project dependency binding
     });
     #endregion
 
