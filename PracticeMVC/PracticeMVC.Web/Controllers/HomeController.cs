@@ -15,12 +15,14 @@ namespace PracticeMVC.Web.Controllers
 
         public IActionResult Index(string id)
         {
+            _logger.LogInformation("I am Index page");
             ViewData["id"] = id;
             return View();
         }
 
         public IActionResult Privacy()
         {
+            _logger.LogInformation("I am Privacy Page");
             return View();
         }
 
