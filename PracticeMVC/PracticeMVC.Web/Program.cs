@@ -1,18 +1,35 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PracticeMVC.Web;
 using PracticeMVC.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+#region Autofac Configuration
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()); //// by this here, added autofac as dependency injection framework in our app.
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    //// here , can load one /more module that's bind dependency 
+    containerBuilder.RegisterModule(new WebModule()); //// it's for Web project dependency binding
+});
+#endregion
+
 
 var app = builder.Build();
 
@@ -35,6 +52,10 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

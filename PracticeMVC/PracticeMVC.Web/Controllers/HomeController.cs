@@ -13,8 +13,9 @@ namespace PracticeMVC.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
+            ViewData["id"] = id;
             return View();
         }
 
