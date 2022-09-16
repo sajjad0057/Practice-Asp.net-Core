@@ -19,6 +19,18 @@ namespace PracticeMVC.Infrastructure
 
         protected override void Load(ContainerBuilder builder)
         {
+
+
+
+            //// InstancePerLifetimeScope() method keeps a single instance for single request .
+            //// here pass parameter coz, ApplicationDbContext class constructor received two parameters . 
+
+
+            /*
+               Must be Binding ApplicationDbContext as AsSelf()...Coz just ApplicationDbContext Class have parametterized constructor
+               not interface consists parameters , so that for ApplicationDbContext binding with his interface IApplicationDbContext is not enough.    
+             */
+
             builder.RegisterType<ApplicationDbContext>().AsSelf()
                 .WithParameter("connectionString", _connectionString)
                 .WithParameter("migrationAssemblyName", _migrationAssemblyName)
