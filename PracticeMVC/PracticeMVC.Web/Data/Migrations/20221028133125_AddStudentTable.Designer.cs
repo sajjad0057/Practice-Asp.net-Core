@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PracticeMVC.Infrastructure.DbContexts;
 
@@ -11,9 +12,10 @@ using PracticeMVC.Infrastructure.DbContexts;
 namespace PracticeMVC.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221028133125_AddStudentTable")]
+    partial class AddStudentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,36 +263,6 @@ namespace PracticeMVC.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("6a969bc5-3f01-4444-90c9-696b230f48ea"),
-                            Address = "Dhaka",
-                            Cgpa = 3.0,
-                            Name = "Student 1"
-                        },
-                        new
-                        {
-                            Id = new Guid("2a8681cb-92c6-4c5c-97f7-5a08833fe6e9"),
-                            Address = "Rangpur",
-                            Cgpa = 3.5,
-                            Name = "Student 2"
-                        },
-                        new
-                        {
-                            Id = new Guid("3a2df08f-9801-4af8-bce5-bb5eb8937188"),
-                            Address = "Dhaka",
-                            Cgpa = 3.7000000000000002,
-                            Name = "Student 3"
-                        },
-                        new
-                        {
-                            Id = new Guid("d2831a6e-cffe-4a82-849d-a0db9800a741"),
-                            Address = "Natore",
-                            Cgpa = 3.5,
-                            Name = "Student 4"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using FirstDemo.Infrastructure.Seeds;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PracticeMVC.Infrastructure.Entities;
 using System;
@@ -16,6 +17,7 @@ namespace PracticeMVC.Infrastructure.DbContexts
 
 
         public DbSet<Course> Courses { get; set; }
+        public DbSet<Student> Students { get; set; }
 
         public ApplicationDbContext(string connectionString, string migrationAssemblyName)
         {
@@ -32,6 +34,21 @@ namespace PracticeMVC.Infrastructure.DbContexts
             }
 
             base.OnConfiguring(optionsBuilder);
+        }
+
+
+        //// Using Fluent API , define Table name and Binding :
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+
+            //// For data Seeding in Student Table 
+
+            modelBuilder.Entity<Student>().HasData(new StudentSeed().Students);
+
+
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
