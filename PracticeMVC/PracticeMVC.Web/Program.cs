@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using PracticeMVC.Infrastructure;
 using PracticeMVC.Infrastructure.DbContexts;
 using PracticeMVC.Web;
+using PracticeMVC.Web.CustomMiddleware;
 using PracticeMVC.Web.Data;
 using Serilog;
 using Serilog.Events;
@@ -29,6 +30,9 @@ try
         .AddEntityFrameworkStores<ApplicationDbContext>();
     builder.Services.AddControllersWithViews();
 
+
+
+
     #region Autofac Configuration
 
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory()); //// by this here, added autofac as dependency injection framework in our app.
@@ -52,6 +56,12 @@ try
 
     #endregion
 
+    #region RegisteringCustomMiddleware
+
+    ////Register custom middleware as a Service
+    builder.Services.AddTransient<MyMiddleware>();
+
+    #endregion
 
     var app = builder.Build();
 
@@ -72,6 +82,14 @@ try
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
     }
+
+
+    #region CustomMiddlewareUse
+
+    //// UseCustomMiddleware
+    app.UseMiddleware<MyMiddleware>();
+
+    #endregion
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
