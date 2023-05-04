@@ -1,3 +1,4 @@
+using GlobalExceptionHandling.Middlewares;
 using Serilog;
 using Serilog.Events;
 
@@ -15,6 +16,8 @@ builder.Host.UseSerilog((ctx, lc) => lc
 );
 
 #endregion
+
+builder.Services.AddTransient<ExceptionMiddleware>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -36,6 +39,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseMiddleware<ExceptionMiddleware>();
+
 app.MapControllers();
+
 
 app.Run();
