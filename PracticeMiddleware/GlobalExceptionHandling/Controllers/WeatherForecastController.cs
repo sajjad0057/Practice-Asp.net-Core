@@ -1,4 +1,3 @@
-using GlobalExceptionHandling.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GlobalExceptionHandling.Controllers
@@ -20,24 +19,20 @@ namespace GlobalExceptionHandling.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> Get()
         {
-            try
-            {
-                throw new Exception("fsg");
+            int x = 0;
+            var res = 5 / x;
 
-                return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-                {
-                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    TemperatureC = Random.Shared.Next(-20, 55),
-                    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-                })
-                .ToArray();
+            await Task.CompletedTask;
 
-            }catch(Exception ex)
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
-                return (IEnumerable<WeatherForecast>)BadRequest();
-            }
+                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                TemperatureC = Random.Shared.Next(-20, 55),
+                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+            })
+            .ToArray();
         }
     }
 }

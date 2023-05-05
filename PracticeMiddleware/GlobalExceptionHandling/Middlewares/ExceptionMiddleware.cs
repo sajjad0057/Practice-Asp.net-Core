@@ -22,11 +22,11 @@ public class ExceptionMiddleware : IMiddleware
 		catch (Exception ex)
 		{
 			_logger.LogError(ex,ex.Message,ex.StackTrace);
-			await HandleException(context, ex);
+			await HandleExceptionAsync(context, ex);
 		}
     }
 
-	private static Task HandleException(HttpContext context, Exception ex) 
+	private static Task HandleExceptionAsync(HttpContext context, Exception ex) 
 	{
 		int statusCode = StatusCodes.Status500InternalServerError;
 
@@ -54,7 +54,9 @@ public class ExceptionMiddleware : IMiddleware
 		context.Response.ContentType= "application/json";
 		context.Response.StatusCode = statusCode;
 
-		return context.Response.WriteAsync(errorResponse.ToString());
+		var x = context.Response.WriteAsync(errorResponse.ToString());
+
+		return x;
 	}
 }
 
