@@ -1,3 +1,4 @@
+using GlobalExceptionHandling.Extensions;
 using GlobalExceptionHandling.Middlewares;
 using Serilog;
 using Serilog.Events;
@@ -39,7 +40,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseMiddleware<ExceptionMiddleware>();
+// Exception middleware calling using extension method.
+app.ConfigureExceptionMiddleware();
 
 app.MapControllers();
 

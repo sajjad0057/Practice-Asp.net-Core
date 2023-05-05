@@ -1,6 +1,5 @@
 ﻿using GlobalExceptionHandling.Exceptions;
 using GlobalExceptionHandling.Models;
-using System.Net;
 
 namespace GlobalExceptionHandling.Middlewares;
 
@@ -57,15 +56,5 @@ public class ExceptionMiddleware : IMiddleware
 		var x = context.Response.WriteAsync(errorResponse.ToString());
 
 		return x;
-	}
-}
-
-// Extension method for this middleware
-
-public static class ExceptionMiddlewareExtension
-{
-	public static void ConfigureExceptionMiddleware(this IApplicationBuilder app)
-	{
-		app.UseMiddleware<ExceptionMiddleware>();
 	}
 }
