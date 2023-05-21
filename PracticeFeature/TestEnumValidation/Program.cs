@@ -1,5 +1,6 @@
-
 using System.Text.Json.Serialization;
+using TestEnumValidation.Extensions;
+using TestEnumValidation.Middlewares;
 
 namespace TestEnumValidation
 {
@@ -24,6 +25,8 @@ namespace TestEnumValidation
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddTransient<ExceptionMiddleware>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -37,8 +40,10 @@ namespace TestEnumValidation
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+            // Exception middleware calling using extension method.
+            app.ConfigureExceptionMiddleware();
 
             app.Run();
         }

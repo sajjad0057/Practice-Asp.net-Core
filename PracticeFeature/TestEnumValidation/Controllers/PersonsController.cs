@@ -11,8 +11,10 @@ namespace TestEnumValidation.Controllers
         public PersonsController() { }
 
         [HttpPost]
-        public IActionResult CreatePerson([FromBody] Person person)
+        public async Task<IActionResult> CreatePerson([FromBody] Person person)
         {
+            //throw new Exception("Throw a intentional exception..");
+            await Task.CompletedTask;
             return Ok(person);
         }
     }
