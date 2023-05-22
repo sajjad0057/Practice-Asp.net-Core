@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 using TestEnumValidation.Extensions;
 using TestEnumValidation.Middlewares;
@@ -18,7 +19,7 @@ namespace TestEnumValidation
                 x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
                 // ignore omitted parameters on models to enable optional params (e.g. User update)
-                x.JsonSerializerOptions.IgnoreNullValues = true;
+                x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
