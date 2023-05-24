@@ -1,2 +1,2 @@
-# ASP.NET-Core-Nuts-And-Bolts
-Practice Code for Asp.NET Core development
+# ASP.NET Framework
+### Practice Code for Windows Forms App (.NET Framework) 
