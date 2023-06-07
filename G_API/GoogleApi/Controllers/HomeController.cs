@@ -23,10 +23,10 @@ namespace GoogleApi.Controllers
             return View();
         }
 
-        public IActionResult UploadVideo()
+        public async Task<IActionResult> UploadVideo()
         {
             var model = new YoutubeDataAPIModel();
-            model.Execute();
+            await model.Execute();
             return View();
         }
 

@@ -20,7 +20,7 @@ namespace GoogleApi.Models
         {             
         }
 
-        public void Execute()
+        public async Task Execute()
         {
             UserCredential credential;
             //using (var stream = new FileStream(@"C:/Users/sajjad/Downloads/client_secret.json", FileMode.Open, FileAccess.Read))
@@ -58,15 +58,17 @@ namespace GoogleApi.Models
 
                 var uploadThread = new Thread(() =>
                 {
-                    videosInsertRequest.Upload();
+                   videosInsertRequest.Upload();
                 });
 
                 uploadThread.Start();
                 uploadThread.Join();
             }
 
+
+            await Task.CompletedTask;
             Console.WriteLine("Video uploaded successfully.");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         private static void VideosInsertRequest_ProgressChanged(IUploadProgress progress)
