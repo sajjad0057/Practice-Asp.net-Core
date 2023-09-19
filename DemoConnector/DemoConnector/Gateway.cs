@@ -5,6 +5,7 @@ using CloudApper.Plugin;
 using DemoConnector.DependencyResolvers;
 using DemoConnector.NotificationContext;
 using DemoConnector.RequestValidators;
+using Microsoft.Extensions.DependencyInjection;
 using System.Composition;
 using System.Net;
 using xPlugin = CloudApper.Plugin.Plugin;
@@ -25,11 +26,13 @@ namespace DemoConnector
         /// <summary>
         /// Init your services
         /// </summary>
-        public Gateway(IRequestValidator requestValidator, INotificationTypeContext actionContext)
+        public Gateway()
         {
-            AttributeServiceExtension.RegisterAttributeServices();
-            _requestValidator = requestValidator;
-            _actionContext = actionContext;
+            var services = AttributeServiceExtension.RegisterAttributeServices();
+            var serviceProvider = services.BuildServiceProvider();
+            _actionContext = serviceProvider.GetService<INotificationTypeContext>();
+            _requestValidator = serviceProvider.GetService<IRequestValidator>();
+
         }
 
         /// <summary>

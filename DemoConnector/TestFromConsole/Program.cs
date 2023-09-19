@@ -21,7 +21,7 @@ try
     {
         new SMSSendStrategy(new SMSSenderService())
     };
-    new Gateway(new RequestValidator(), new NotificationTypeContext(strategys)).ExecuteIntendedOperationsAsync(formPlugin, contextData, "SMS").Wait();
+    new Gateway().ExecuteIntendedOperationsAsync(formPlugin, contextData, "SMS").Wait();
 }
 catch(Exception ex)
 {
