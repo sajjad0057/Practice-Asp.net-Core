@@ -7,14 +7,17 @@ namespace FirstDemo.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ICourseModel _courseModel;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ICourseModel courseModel)
         {
             _logger = logger;
+            _courseModel = courseModel;
         }
 
         public IActionResult Index(string id)
         {
+            _logger.LogInformation("I'm in Index page !");
             ViewData["id"] = id;
             return View();
         }
