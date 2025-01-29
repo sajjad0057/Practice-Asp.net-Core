@@ -2,7 +2,22 @@
     ViewData["Title"] = "Home Page";
 }
 
+@section Styles
+{
+<link href="~/css/test.css" rel="stylesheet" />
+}
+
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+    @ViewData["id"];
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@section Scripts
+{
+    <script>
+        alert("Hello");
+    </script>
+
+}

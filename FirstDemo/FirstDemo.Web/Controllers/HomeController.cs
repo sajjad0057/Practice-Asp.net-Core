@@ -13,14 +13,21 @@ namespace FirstDemo.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string id)
         {
+            ViewData["id"] = id;
             return View();
         }
 
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public IActionResult Test()
+        {
+            var model = new TestModel();
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
