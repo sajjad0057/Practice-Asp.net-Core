@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FirstDemo.Infrastructure.DbContexts;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
 {
     private readonly string _connectionString;
     private readonly string _migrationAssemblyName;

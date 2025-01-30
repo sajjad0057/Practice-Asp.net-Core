@@ -1,5 +1,8 @@
 ﻿using Autofac;
 using FirstDemo.Infrastructure.DbContexts;
+using FirstDemo.Infrastructure.Repositories;
+using FirstDemo.Infrastructure.Services;
+using FirstDemo.Infrastructure.UnitOfWorks;
 
 namespace FirstDemo.Infrastructure;
 
@@ -17,6 +20,19 @@ public class InfrastructureModule(string connectionString, string migrationAssem
             .WithParameter("migrationAssemblyName", _migrationAssemblyName)
             .InstancePerLifetimeScope();
 
+        builder.RegisterType<ApplicationDbContext>().As<IApplicationDbContext>()
+            .WithParameter("connectionString", _connectionString)
+            .WithParameter("migrationAssemblyName", _migrationAssemblyName)
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<CourseService>().As<ICourseService>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<ApplicationUnitOfWork>().As<IApplicationUnitOfWork>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<CourseRepository>().As<ICourseRepository>()
+            .InstancePerLifetimeScope();
 
         base.Load(builder);
     }

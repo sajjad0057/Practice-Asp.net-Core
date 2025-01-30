@@ -1,4 +1,5 @@
-﻿using FirstDemo.Web.Areas.Admin.Models;
+﻿using Autofac;
+using FirstDemo.Web.Areas.Admin.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FirstDemo.Web.Areas.Admin.Controllers;
@@ -6,6 +7,14 @@ namespace FirstDemo.Web.Areas.Admin.Controllers;
 [Area("Admin")]
 public class CourseController : Controller
 {
+    private readonly ILifetimeScope _scope;
+    private readonly ILogger<CourseController> _logger;
+
+    public CourseController(ILogger<CourseController> logger, ILifetimeScope scope)
+    {
+        _logger = logger;
+        _scope = scope;
+    }
     public IActionResult Index()
     {
         return View();
@@ -13,7 +22,7 @@ public class CourseController : Controller
 
     public IActionResult Create()
     {
-        CourseCreateModel model = new CourseCreateModel();
+        CourseCreateModel model = _scope.Resolve<CourseCreateModel>();
         return View(model);
     }
 
@@ -21,9 +30,11 @@ public class CourseController : Controller
     public async Task<IActionResult> Create(CourseCreateModel model)
     {
         if (ModelState.IsValid)
+        {
+            model.ResolveDependency(_scope);
             await model.CreateCourseAsync();
+        }           
 
         return View(model);
     }
-
 }
