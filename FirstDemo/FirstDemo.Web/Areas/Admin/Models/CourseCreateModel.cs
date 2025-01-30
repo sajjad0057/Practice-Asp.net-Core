@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FirstDemo.Web.Areas.Admin.Models;
 
-public class CourseCreateModel
+public class CourseCreateModel : BaseModel
 {
     [Required]
     public string Title { get; set; }
@@ -13,10 +13,10 @@ public class CourseCreateModel
     public DateTime ClassStartDate { get; set; }
 
     private ICourseService _courseService;
-    private ILifetimeScope _scope;
-    public CourseCreateModel()
+  
+    public CourseCreateModel() : base()
     {
-        
+
     }
     public CourseCreateModel(ICourseService courseService)
     {
@@ -25,7 +25,7 @@ public class CourseCreateModel
 
     internal void ResolveDependency(ILifetimeScope scope)
     {
-        _scope = scope;
+        base.ResolveDependency(scope);
         _courseService = _scope.Resolve<ICourseService>();
     }
 

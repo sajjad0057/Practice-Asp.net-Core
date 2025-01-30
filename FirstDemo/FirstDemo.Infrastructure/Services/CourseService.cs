@@ -19,4 +19,30 @@ public class CourseService(IApplicationUnitOfWork applicationUnitOfWork) : ICour
         _applicationUnitOfWork.Courses.Add(courseEO);
         _applicationUnitOfWork.Save();
     }
+
+    public (int total, int totalDisplay, IList<CourseBO> records) GetCourses(int pageIndex,
+    int pageSize, string searchText, string orderby)
+    {
+        (IList<CourseEO> data, int total, int totalDisplay) results = _applicationUnitOfWork
+            .Courses.GetCourses(pageIndex, pageSize, searchText, orderby);
+
+
+        IList<CourseBO> courses = new List<CourseBO>();
+
+        foreach (CourseEO courseEO in results.data)
+        {
+            courses.Add(new CourseBO
+            {
+                Id = courseEO.Id,
+                Name = courseEO.Title,
+                Fees = courseEO.Fees,
+                ClassStartDate = courseEO.ClassStartDate,
+            });
+
+        }
+
+        return (results.total, results.totalDisplay, courses);
+
+
+    }
 }

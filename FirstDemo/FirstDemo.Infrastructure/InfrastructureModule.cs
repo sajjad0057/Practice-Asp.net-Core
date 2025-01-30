@@ -27,6 +27,8 @@ public class InfrastructureModule(string connectionString, string migrationAssem
 
         builder.RegisterType<CourseService>().As<ICourseService>()
             .InstancePerLifetimeScope();
+        builder.RegisterType<TimeService>().As<ITimeService>()
+            .InstancePerLifetimeScope();
 
         builder.RegisterType<ApplicationUnitOfWork>().As<IApplicationUnitOfWork>()
             .InstancePerLifetimeScope();

@@ -6,4 +6,7 @@ public class Course : IEntity<Guid>
     public string Title { get; set; }
     public double Fees { get; set; }
     public DateTime ClassStartDate { get; set; }
+    public IList<Topic> Topics { get; set; }
+    public IList<CourseRegistration> CourseStudents { get; set; }
+
 }

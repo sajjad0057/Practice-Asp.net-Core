@@ -7,5 +7,6 @@ namespace FirstDemo.Infrastructure.DbContexts
     {
         DbSet<Course> Courses { get; set; }
         DbSet<Student> Students { get; set; }
+        DbSet<Result> Results { get; set; }
     }
 }
