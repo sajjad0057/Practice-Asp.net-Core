@@ -1,6 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
 using Autofac;
-using FirstDemo.Web.Data;
 using FirstDemo.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +7,8 @@ using System.Reflection;
 using FirstDemo.Web;
 using Serilog;
 using Serilog.Events;
+using FirstDemo.Infrastructure.DbContexts;
+using FirstDemo.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,64 +23,79 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 #endregion
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-var assemblyName = Assembly.GetExecutingAssembly().FullName;
-
-#region Autofac Configuration
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());  //// by this here, added autofac as dependency injection framework with asp.net core app
-builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+try
 {
-    //// here , can load one / more module that need for binding .
-    containerBuilder.RegisterModule(new WebModule());  //// it's for Web project dependency binding
 
-    //containerBuilder.RegisterModule(new InfrastructureModule(connectionString, assemblyName)); //// it's for Infrastructure project dependency binding
-});
+    Log.Information("Application starting");
+    // Add services to the container.
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+        ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    var assemblyName = Assembly.GetExecutingAssembly().FullName;
 
-#endregion
+    #region Autofac Configuration
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());  //// by this here, added autofac as dependency injection framework with asp.net core app
+    builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+    {
+        //// here , can load one / more module that need for binding .
+        containerBuilder.RegisterModule(new WebModule());  //// it's for Web project dependency binding
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
+        containerBuilder.RegisterModule(new InfrastructureModule(connectionString,
+            assemblyName)); //// it's for Infrastructure project dependency binding
+    });
 
-builder.Services.AddTransient<ICourseModel, CourseModel>();
+    #endregion
 
-var app = builder.Build();
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(connectionString, m => m.MigrationsAssembly(assemblyName)));
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseMigrationsEndPoint();
+    builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        .AddEntityFrameworkStores<ApplicationDbContext>();
+    builder.Services.AddControllersWithViews();
+
+    builder.Services.AddTransient<ICourseModel, CourseModel>();
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseMigrationsEndPoint();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+
+    app.UseRouting();
+
+    app.UseAuthorization();
+
+    app.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.MapRazorPages();
+
+    app.Run();
 }
-else
+catch (Exception ex)
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    Log.Fatal(ex, "Application start-up failed .");
+}
+finally
+{
+    Log.CloseAndFlush();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapControllerRoute(
-  name: "areas",
-  pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
-
-app.Run();
 

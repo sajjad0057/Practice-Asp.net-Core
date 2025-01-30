@@ -1,0 +1,48 @@
+﻿@* @model CourseEditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Edit Course</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form role="form" asp-antiforgery="true" asp-area="Admin"
+                      asp-controller="Course" asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label asp-for="Title"></label>
+                            <input type="text" class="form-control" asp-for="Title" placeholder="Enter title">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Fees"></label>
+                            <input type="text" class="form-control" asp-for="Fees" placeholder="Enter fees">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ClassStartDate"></label>
+                            <input type="text" class="form-control" asp-for="ClassStartDate" placeholder="Enter start date">
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card -->
+
+        </div>
+        <!--/.col (left) -->
+    </div>
+    <!-- /.row -->
+</div><!-- /.container-fluid -->
+ *@

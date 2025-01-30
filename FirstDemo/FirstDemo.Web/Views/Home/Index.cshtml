@@ -2,22 +2,48 @@
     ViewData["Title"] = "Home Page";
 }
 
+
 @section Styles
 {
-<link href="~/css/test.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/test.css" />
+    <link rel="stylesheet" href="~/scss/StyleSheet.css" />
 }
 
-
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    @ViewData["id"];
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome @ViewData["id"]</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<div class="box" id="test">
+    <p>
+        <h1>
+            scss
+        </h1>
+        <br />
+
+    </p>
+    <button> test nesting </button>
+
+</div>
+<br />
+<br />
+<button class="mybutton">
+    button
+</button>
+
+
+
+
 
 @section Scripts
 {
-    <script>
-        alert("Hello");
-    </script>
-
+    <script src="~/ts/demo.js"></script>
 }
+
+
+
+
+
+
+
+

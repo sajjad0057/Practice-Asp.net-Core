@@ -1,0 +1,68 @@
+﻿@model CourseCreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Create Course</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form role="form" asp-antiforgery="true" asp-area="Admin"
+                      asp-controller="Course" asp-action="Create" method="post">
+                    <div class="card-body">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Title"></label>
+                            <input type="text"
+                                   asp-for="Title"
+                                   class="form-control"
+                                   placeholder="Enter Course Title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Fees"></label>
+                            <input type="number"
+                                   asp-for="Fees"
+                                   class="form-control"
+                                   placeholder="Enter Course Fees" />
+                            <span asp-validation-for="Fees" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ClassStartDate"></label>
+                            <input type="datetime"
+                                   asp-for="ClassStartDate"
+                                   class="form-control"
+                                   placeholder="Class Start Date" />
+                            <span asp-validation-for="ClassStartDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.card -->
+
+        </div>
+        <!--/.col (left) -->
+    </div>
+    <!-- /.row -->
+</div>
+<!-- /.container-fluid -->
+
+<!--For ClientSide Validations -->
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

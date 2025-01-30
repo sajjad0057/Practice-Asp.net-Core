@@ -1,0 +1,22 @@
+﻿div {
+  background-color: silver;
+  color: blue;
+}
+div button {
+  background-color: blanchedalmond;
+}
+div button:hover {
+  background-color: orangered;
+}
+
+.box {
+  background-color: orange;
+  width: 200px;
+  height: 200px;
+}
+
+.mybutton {
+  background-color: red;
+  width: 100px;
+  height: 30px;
+}
