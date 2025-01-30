@@ -19,11 +19,6 @@ public class CourseListModel : BaseModel
         _courseService = _scope.Resolve<ICourseService>();
     }
 
-    //public object? GetPagedCourses(DataTablesAjaxRequestModel model)
-    //{
-    //    throw new NotImplementedException();
-    //}
-
     public object? GetPagedCourses(DataTablesAjaxRequestModel model)
     {
 
@@ -47,5 +42,10 @@ public class CourseListModel : BaseModel
                     }
                 ).ToArray()
         };
+    }
+
+    internal void DeleteCourse(Guid id)
+    {
+        _courseService.DeleteCourse(id);
     }
 }

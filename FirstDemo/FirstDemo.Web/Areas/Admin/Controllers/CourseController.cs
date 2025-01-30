@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using FirstDemo.Infrastructure.Exceptions;
 using FirstDemo.Web.Areas.Admin.Models;
+using FirstDemo.Web.Codes;
 using FirstDemo.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,8 +35,44 @@ public class CourseController : Controller
         if (ModelState.IsValid)
         {
             model.ResolveDependency(_scope);
-            await model.CreateCourseAsync();
-        }           
+
+            try
+            {
+                await model.CreateCourseAsync();
+
+                TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+                {
+                    Message = "Successfully added a new course .",
+                    Type = ResponseTypes.Success
+                });
+
+                return RedirectToAction("Index");
+            }
+            catch (DuplicateException ioe)
+            {
+                _logger.LogError(ioe, ioe.Message);
+
+                ////for showing duplicateException Message in Client Side Validation Message Showing Section.
+                //ModelState.AddModelError("", ioe.Message);
+
+
+                TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+                {
+                    Message = ioe.Message,
+                    Type = ResponseTypes.Warning
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+                {
+                    Message = "There Was a Problem in Creating Course .",
+                    Type = ResponseTypes.Danger
+                });
+            }
+
+        }
 
         return View(model);
     }
@@ -45,5 +83,74 @@ public class CourseController : Controller
         var model = _scope.Resolve<CourseListModel>();
         return Json(model.GetPagedCourses(dataTableModel));
 
+    }
+
+    public IActionResult Edit(Guid id)
+    {
+        CourseEditModel model = _scope.Resolve<CourseEditModel>();
+        model.LoadData(id);
+        return View(model);
+    }
+
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public IActionResult Edit(CourseEditModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            model.ResolveDependency(_scope);
+            try
+            {
+                model.EditCourse();
+
+                TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+                {
+                    Message = "Successfully Updated course ! ",
+                    Type = ResponseTypes.Success
+                });
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+                {
+                    Message = "There Was a Problem in Updating Course .",
+                    Type = ResponseTypes.Danger
+                });
+
+            }
+        }
+
+        return View(model);
+    }
+
+
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public IActionResult Delete(Guid id)
+    {
+        try
+        {
+            var model = _scope.Resolve<CourseListModel>();
+            model.DeleteCourse(id);
+
+            TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+            {
+                Message = "Successfully Deleted this course ! ",
+                Type = ResponseTypes.Success
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+            {
+                Message = "There Was a Problem in Deleting Course .",
+                Type = ResponseTypes.Danger
+            });
+        }
+        return RedirectToAction("Index");
     }
 }
