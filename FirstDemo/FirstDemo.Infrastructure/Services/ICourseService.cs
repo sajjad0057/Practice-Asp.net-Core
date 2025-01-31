@@ -5,7 +5,7 @@ namespace FirstDemo.Infrastructure.Services;
 
 public interface ICourseService
 {
-    void CreateCourse(CourseBO courseBO);
+    Task CreateCourseAsync(CourseBO courseBO);
     void DeleteCourse(Guid id);
     void EditCourse(CourseBO courseBO);
     CourseBO GetCourse(Guid id);

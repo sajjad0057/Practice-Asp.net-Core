@@ -29,12 +29,17 @@ public class InfrastructureModule(string connectionString, string migrationAssem
             .InstancePerLifetimeScope();
         builder.RegisterType<TimeService>().As<ITimeService>()
             .InstancePerLifetimeScope();
+        builder.RegisterType<DataUtility>().As<IDataUtility>()
+            .InstancePerLifetimeScope();
+
 
         builder.RegisterType<ApplicationUnitOfWork>().As<IApplicationUnitOfWork>()
             .InstancePerLifetimeScope();
 
         builder.RegisterType<CourseRepository>().As<ICourseRepository>()
             .InstancePerLifetimeScope();
+
+
 
         base.Load(builder);
     }

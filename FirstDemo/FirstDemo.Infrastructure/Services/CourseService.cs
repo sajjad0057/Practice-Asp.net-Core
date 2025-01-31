@@ -1,14 +1,17 @@
-﻿using FirstDemo.Infrastructure.Exceptions;
+﻿using AutoMapper;
+using FirstDemo.Infrastructure.Exceptions;
 using FirstDemo.Infrastructure.UnitOfWorks;
 using CourseBO = FirstDemo.Infrastructure.BusinessObjects.Course;
 using CourseEO = FirstDemo.Infrastructure.Entities.Course;
 
 namespace FirstDemo.Infrastructure.Services;
 
-public class CourseService(IApplicationUnitOfWork applicationUnitOfWork) : ICourseService
+public class CourseService(IMapper mapper, IApplicationUnitOfWork applicationUnitOfWork) : ICourseService
 {
     private readonly IApplicationUnitOfWork _applicationUnitOfWork = applicationUnitOfWork;
-    public void CreateCourse(CourseBO courseBO)
+    private readonly IMapper _mapper = mapper;
+
+    public async Task CreateCourseAsync(CourseBO courseBO)
     {
         var count = _applicationUnitOfWork.Courses.GetCount(x => x.Title == courseBO.Name);
 
@@ -18,13 +21,13 @@ public class CourseService(IApplicationUnitOfWork applicationUnitOfWork) : ICour
         }
 
         courseBO.SetProperClassStartDate();
-        CourseEO courseEO = new CourseEO();
-        courseEO.Title = courseBO.Name;
-        courseEO.Fees = courseBO.Fees;
-        courseEO.ClassStartDate = courseBO.ClassStartDate;
 
-        _applicationUnitOfWork.Courses.Add(courseEO);
+        var courseEntity = _mapper.Map<CourseEO>(courseBO);
+
+        await Task.Run(() => _applicationUnitOfWork.Courses.Add(courseEntity));
+
         _applicationUnitOfWork.Save();
+
     }
 
     public (int total, int totalDisplay, IList<CourseBO> records) GetCourses(int pageIndex,
@@ -33,20 +36,15 @@ public class CourseService(IApplicationUnitOfWork applicationUnitOfWork) : ICour
         (IList<CourseEO> data, int total, int totalDisplay) results = _applicationUnitOfWork
             .Courses.GetCourses(pageIndex, pageSize, searchText, orderby);
 
+        //IList<CourseBO> courses = new List<CourseBO>();
 
-        IList<CourseBO> courses = new List<CourseBO>();
+        //foreach (CourseEO courseEO in results.data)
+        //{
+        //    courses.Add(_mapper.Map<CourseBO>(courseEO));
 
-        foreach (CourseEO courseEO in results.data)
-        {
-            courses.Add(new CourseBO
-            {
-                Id = courseEO.Id,
-                Name = courseEO.Title,
-                Fees = courseEO.Fees,
-                ClassStartDate = courseEO.ClassStartDate,
-            });
+        //}
 
-        }
+        var courses = _mapper.Map<List<CourseBO>>(results.data);
 
         return (results.total, results.totalDisplay, courses);
     }
@@ -61,13 +59,7 @@ public class CourseService(IApplicationUnitOfWork applicationUnitOfWork) : ICour
     {
         var courseEO = _applicationUnitOfWork.Courses.GetById(id);
 
-        var courseBO = new CourseBO();
-
-        courseBO.Name = courseEO.Title;
-        courseBO.Fees = courseEO.Fees;
-        courseBO.ClassStartDate = courseEO.ClassStartDate;
-
-        return courseBO;      
+        return _mapper.Map<CourseBO>(courseEO);
     }
 
     public void EditCourse(CourseBO courseBO)
@@ -75,9 +67,7 @@ public class CourseService(IApplicationUnitOfWork applicationUnitOfWork) : ICour
         var courseEO = _applicationUnitOfWork.Courses.GetById(courseBO.Id);
         if(courseEO is not null)
         {
-            courseEO.Title = courseBO.Name;
-            courseEO.Fees = courseBO.Fees;
-            courseEO.ClassStartDate = courseBO.ClassStartDate;
+            _mapper.Map(courseBO, courseEO);
 
             _applicationUnitOfWork.Save();
         }

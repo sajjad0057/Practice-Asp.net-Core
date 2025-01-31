@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using AutoMapper;
 using FirstDemo.Infrastructure.Services;
 using System.ComponentModel.DataAnnotations;
 using CourseBO = FirstDemo.Infrastructure.BusinessObjects.Course;
@@ -16,66 +17,38 @@ namespace FirstDemo.Web.Areas.Admin.Models
         public DateTime ClassStartDate { get; set; }
 
         private ICourseService _courseService;
-        //private IMapper _mapper;
-
+        private IMapper _mapper;
 
         public CourseEditModel() : base()
         {
-
         }
 
-
-        public CourseEditModel(ICourseService courseService)
+        public CourseEditModel(ICourseService courseService, IMapper mapper)
         {
             _courseService = courseService;
-            //_mapper = mapper;
+            _mapper = mapper;
         }
-
-        //public void LoadData(Guid id)
-        //{
-        //    CourseBO course = _courseService.GetCourse(id);
-
-        //    if (course != null)
-        //    {
-        //        _mapper.Map(course, this);
-        //    }
-        //}
-
-
-        //public void EditCourse()
-        //{
-        //    CourseBO courseBO = _mapper.Map<CourseBO>(this);
-        //    _courseService.EditCourse(courseBO);
-        //}
-
 
         public override void ResolveDependency(ILifetimeScope scope)
         {
             base.ResolveDependency(scope);
             _courseService = _scope.Resolve<ICourseService>();
-            //_mapper = _scope.Resolve<IMapper>();
+            _mapper = _scope.Resolve<IMapper>();
         }
 
-        internal void LoadData(Guid id)
+        public void LoadData(Guid id)
         {
-            var course = _courseService.GetCourse(id);
-            if(course is not null)
+            CourseBO course = _courseService.GetCourse(id);
+
+            if (course != null)
             {
-                Id = id;
-                Title = course.Name;
-                Fees = course.Fees;
-                ClassStartDate = course.ClassStartDate;
+                _mapper.Map(course, this);
             }
         }
 
-        internal void EditCourse()
+        public void EditCourse()
         {
-            CourseBO courseBO = new CourseBO();
-            courseBO.Id = Id;
-            courseBO.Name = Title;
-            courseBO.Fees = Fees;
-            courseBO.ClassStartDate = ClassStartDate;
-
+            CourseBO courseBO = _mapper.Map<CourseBO>(this);
             _courseService.EditCourse(courseBO);
         }
     }
