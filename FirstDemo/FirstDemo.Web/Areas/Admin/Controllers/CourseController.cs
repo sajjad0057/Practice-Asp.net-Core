@@ -52,8 +52,8 @@ public class CourseController : Controller
             {
                 _logger.LogError(ioe, ioe.Message);
 
-                ////for showing duplicateException Message in Client Side Validation Message Showing Section.
-                //ModelState.AddModelError("", ioe.Message);
+                //for showing duplicateException Message in Client Side Validation Message Showing Section.
+                ModelState.AddModelError("", ioe.Message);
 
 
                 TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
@@ -72,6 +72,26 @@ public class CourseController : Controller
                 });
             }
 
+        }
+        else
+        {
+            ////// For showing validation message from server side for invalid ModelState , and Messages -   
+            string messageText = string.Empty;
+            foreach (var message in ModelState.Values)
+            {
+                for (int i = 0; i < message.Errors.Count(); i++)
+                {
+                    messageText += $"{message.Errors[i].ErrorMessage}";
+
+
+                }
+
+            }
+            TempData.Put<ResponseModel>("ResponseMessage", new ResponseModel
+            {
+                Message = messageText,
+                Type = ResponseTypes.Warning
+            });
         }
 
         return View(model);
