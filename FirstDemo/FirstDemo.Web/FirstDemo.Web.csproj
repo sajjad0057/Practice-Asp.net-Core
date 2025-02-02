@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Identity\Data\" />
     <Folder Include="Logs\" />
     <Folder Include="wwwroot\admin\" />
   </ItemGroup>

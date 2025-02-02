@@ -1,4 +1,5 @@
 ﻿using FirstDemo.Infrastructure.Entities;
+using FirstDemo.Infrastructure.Seeds;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -56,8 +57,8 @@ public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
             .WithMany(sc => sc.StudentCourses)
             .HasForeignKey(x => x.StudentId);
 
+        modelBuilder.Entity<Student>().HasData(new StudentSeed().StudentsData);
+
         base.OnModelCreating(modelBuilder);
     }
-
-
 }
