@@ -1,11 +1,13 @@
 ﻿using FirstDemo.Infrastructure.Entities;
+using FirstDemo.Infrastructure.Entities.IdentityEntities;
 using FirstDemo.Infrastructure.Seeds;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FirstDemo.Infrastructure.DbContexts;
 
-public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid,
+        ApplicationUserClaim, ApplicationUserRole, ApplicationUserLogin, ApplicationRoleClaim, ApplicationUserToken>,IApplicationDbContext
 {
     private readonly string _connectionString;
     private readonly string _migrationAssemblyName;

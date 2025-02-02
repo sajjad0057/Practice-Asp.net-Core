@@ -9,7 +9,9 @@ using Serilog;
 using Serilog.Events;
 using FirstDemo.Infrastructure.DbContexts;
 using FirstDemo.Infrastructure;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
+using FirstDemo.Infrastructure.Entities.IdentityEntities;
+using FirstDemo.Infrastructure.Services.IdentityServices;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,21 +55,63 @@ try
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     #endregion
 
-    //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    //    .AddEntityFrameworkStores<ApplicationDbContext>();
+    #region ForDefaultIdentityManagement
+    ////builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    ////    .AddEntityFrameworkStores<ApplicationDbContext>();
+    #endregion
+
+
+    #region ForCustomizeIdentityManagement
 
     builder.Services
-        .AddIdentity<AppUser,AppRole>()
+        .AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddUserManager<AppUserManager>()
-        .AddRoleManager<AppRoleManager>()
-        .AddSignInManager<AppSignInManager>()
+        .AddUserManager<ApplicationUserManager>()
+        .AddRoleManager<ApplicationRoleManager>()
+        .AddSignInManager<ApplicationSignInManager>()
         .AddDefaultTokenProviders();
 
 
+    builder.Services
+    .AddAuthentication()
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+    {
+        options.LoginPath = new PathString("/Account/Login");
+        options.AccessDeniedPath = new PathString("/Account/Login");
+        options.LogoutPath = new PathString("/Account/Logout");
+        options.Cookie.Name = "FirstDemoPortal.Identity";
+        options.SlidingExpiration = true;
+        options.ExpireTimeSpan = TimeSpan.FromHours(1);
+    });
+
+    builder.Services
+    .Configure<IdentityOptions>(options =>
+    {
+        // Password settings.
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequiredUniqueChars = 0;
+
+        // Lockout settings.
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.AllowedForNewUsers = true;
+
+        // User settings.
+        options.User.AllowedUserNameCharacters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+        options.User.RequireUniqueEmail = true;
+    });
+
+    #endregion
+
 
     builder.Services.AddControllersWithViews();
-    builder.Services.AddTransient<ICourseModel, CourseModel>();
+
+    //builder.Services.AddTransient<ICourseModel, CourseModel>();
 
     var app = builder.Build();
 
@@ -98,7 +142,7 @@ try
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
-    app.MapRazorPages();
+    //app.MapRazorPages();
 
     app.Run();
 }

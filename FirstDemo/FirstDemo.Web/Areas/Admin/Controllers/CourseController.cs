@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FirstDemo.Web.Areas.Admin.Controllers;
 
 [Area("Admin")]
+
 public class CourseController : Controller
 {
     private readonly ILifetimeScope _scope;
@@ -25,7 +26,7 @@ public class CourseController : Controller
         return View();
     }
 
-    [Authorize()]
+    [Authorize]
     public IActionResult Create()
     {
         CourseCreateModel model = _scope.Resolve<CourseCreateModel>();

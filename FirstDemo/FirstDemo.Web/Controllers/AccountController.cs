@@ -8,27 +8,26 @@ using Autofac;
 using FirstDemo.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using FirstDemo.Infrastructure.Entities.IdentityEntities;
 
 namespace FirstDemo.Web.Controllers;
 
 public class AccountController : Controller
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<AccountController> _logger;
     private readonly IEmailSender _emailSender;
     private readonly ILifetimeScope _scope;
 
-    public AccountController(SignInManager<IdentityUser> signInManager,
-        UserManager<IdentityUser> userManager,
+    public AccountController(SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
         ILogger<AccountController> logger,
-        IEmailSender emailSender,
         ILifetimeScope scope)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _logger = logger;
-        _emailSender = emailSender;
         _scope = scope;
     }
 
@@ -49,7 +48,13 @@ public class AccountController : Controller
         
         if (ModelState.IsValid)
         {
-            var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser {
+                UserName = model.Email,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName
+            };
+
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
@@ -63,8 +68,8 @@ public class AccountController : Controller
                     values: new { area = "", userId = user.Id, code = code, returnUrl = model.ReturnUrl },
                     protocol: Request.Scheme);
 
-                await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
-                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                //await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
+                //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 if (_userManager.Options.SignIn.RequireConfirmedAccount)
                 {
@@ -149,7 +154,7 @@ public class AccountController : Controller
         }
         else
         {
-            return RedirectToAction("Home/Index");
+            return RedirectToAction("Index", "Home"); ;
         }
     }
 
