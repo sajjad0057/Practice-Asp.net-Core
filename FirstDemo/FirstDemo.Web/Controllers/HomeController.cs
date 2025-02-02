@@ -21,7 +21,7 @@ namespace FirstDemo.Web.Controllers
             _timeService = timeService;
         }
 
-        public async Task<IActionResult> IndexAsync(string id)
+        public async Task<IActionResult> Index(string id)
         {
             _logger.LogInformation("I'm in Index page !");
             ViewData["id"] = id;

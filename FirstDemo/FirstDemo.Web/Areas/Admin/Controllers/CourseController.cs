@@ -3,6 +3,7 @@ using FirstDemo.Infrastructure.Exceptions;
 using FirstDemo.Web.Areas.Admin.Models;
 using FirstDemo.Web.Codes;
 using FirstDemo.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FirstDemo.Web.Areas.Admin.Controllers;
@@ -18,11 +19,13 @@ public class CourseController : Controller
         _logger = logger;
         _scope = scope;
     }
+
     public IActionResult Index()
     {
         return View();
     }
 
+    [Authorize()]
     public IActionResult Create()
     {
         CourseCreateModel model = _scope.Resolve<CourseCreateModel>();
@@ -145,8 +148,6 @@ public class CourseController : Controller
 
         return View(model);
     }
-
-
 
     [HttpPost, ValidateAntiForgeryToken]
     public IActionResult Delete(Guid id)

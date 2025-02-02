@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Events;
 using FirstDemo.Infrastructure.DbContexts;
 using FirstDemo.Infrastructure;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.General;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,6 @@ builder.Host.UseSerilog((ctx, lc) => lc
 
 try
 {
-
     Log.Information("Application starting");
     // Add services to the container.
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -39,7 +39,6 @@ try
     {
         //// here , can load one / more module that need for binding .
         containerBuilder.RegisterModule(new WebModule());  //// it's for Web project dependency binding
-
         containerBuilder.RegisterModule(new InfrastructureModule(connectionString,
             assemblyName)); //// it's for Infrastructure project dependency binding
     });
@@ -54,11 +53,20 @@ try
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     #endregion
 
+    //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-    builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-        .AddEntityFrameworkStores<ApplicationDbContext>();
+    builder.Services
+        .AddIdentity<AppUser,AppRole>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddUserManager<AppUserManager>()
+        .AddRoleManager<AppRoleManager>()
+        .AddSignInManager<AppSignInManager>()
+        .AddDefaultTokenProviders();
+
+
+
     builder.Services.AddControllersWithViews();
-
     builder.Services.AddTransient<ICourseModel, CourseModel>();
 
     var app = builder.Build();
@@ -79,7 +87,6 @@ try
     app.UseStaticFiles();
 
     app.UseRouting();
-
     app.UseAuthorization();
 
     app.MapControllerRoute(
@@ -90,6 +97,7 @@ try
     app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
+
     app.MapRazorPages();
 
     app.Run();
