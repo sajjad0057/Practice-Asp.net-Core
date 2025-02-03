@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
+using Autofac.Core;
 using FirstDemo.Infrastructure.DbContexts;
-using FirstDemo.Infrastructure.Entities.IdentityEntities;
-using FirstDemo.Infrastructure.Services.IdentityServices;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
+using FirstDemo.Web;
 using Microsoft.EntityFrameworkCore;
 
 public class Startup
@@ -15,71 +13,20 @@ public class Startup
         _configuration = configuration;
     }
 
-    public void ConfigureServices(IServiceCollection services)
+    public void ConfigureServices(IServiceCollection services, string connectionString, string assemblyName)
     {
-        var connectionString = _configuration.GetConnectionString("DefaultConnection")
-            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-        var assemblyName = Assembly.GetExecutingAssembly().FullName;
-
-        // Configure DbContext
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString, m => m.MigrationsAssembly(assemblyName)));
-
         services.AddDatabaseDeveloperPageExceptionFilter();
 
-        // Configure Identity
-        services.AddIdentity<ApplicationUser, ApplicationRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddUserManager<ApplicationUserManager>()
-            .AddRoleManager<ApplicationRoleManager>()
-            .AddSignInManager<ApplicationSignInManager>()
-            .AddDefaultTokenProviders();
+        #region Config AutoMapper
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        #endregion
 
-        // Configure Cookie Authentication
-        services
-            .AddAuthentication()
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-            {
-                options.LoginPath = new PathString("/Account/Login");
-                options.AccessDeniedPath = new PathString("/Account/Login");
-                options.LogoutPath = new PathString("/Account/Logout");
-                options.Cookie.Name = "FirstDemoPortal.Identity";
-                options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromHours(1);
-            });
+        //using Ext. method for IServiceCollection to manage customizing identity related config
 
-        // Configure Identity Options
-        services.Configure<IdentityOptions>(options =>
-        {
-            // Password settings.
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequiredLength = 6;
-            options.Password.RequiredUniqueChars = 0;
-
-            // Lockout settings.
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            options.Lockout.MaxFailedAccessAttempts = 5;
-            options.Lockout.AllowedForNewUsers = true;
-
-            // User settings.
-            options.User.AllowedUserNameCharacters =
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-            options.User.RequireUniqueEmail = true;
-        });
-
-        // Configure Policy-Based Authorization
-        services.AddAuthorization(options =>
-        {
-            options.AddPolicy("CourseManagementPolicy", policy =>
-            {
-                policy.RequireAuthenticatedUser();
-                policy.RequireRole("Admin", "Teacher");
-            });
-        });
+        services.AddCustomIdentityServices();
 
         services.AddControllersWithViews();
     }

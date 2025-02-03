@@ -20,23 +20,28 @@ try
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
         throw new InvalidOperationException("Connection string 'DefaultConnection' not found."); ;
+
     var assemblyName = Assembly.GetExecutingAssembly().FullName;
 
-    // Add Autofac Dependency Injection
-    builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+    #region Autofac Configuration
+
+    builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());  //// by this here, added autofac as dependency injection framework with asp.net core app
     builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     {
-        containerBuilder.RegisterModule(new WebModule());
-        containerBuilder.RegisterModule(
-            new InfrastructureModule(connectionString, assemblyName)
-            );
+        //// here , can load one / more module that need for binding .
+        containerBuilder.RegisterModule(new WebModule());  //// it's for Web project dependency binding
+
+        containerBuilder.RegisterModule(new InfrastructureModule(connectionString, assemblyName)); //// it's for Infrastructure project dependency binding
     });
 
-    //// Creating Startup class and move some code to these class and executing these configure through Startup class using Startup class instance 
-    // Create `Startup` instance
+    #endregion
+
+
+    //// Creating Startup class and move all code for service config to Startup class and executing these configure through Startup class using Startup class instance 
+    //// Create `Startup` instance
     var startup = new Startup(builder.Configuration);
     
-    startup.ConfigureServices(builder.Services);
+    startup.ConfigureServices(builder.Services, connectionString, assemblyName);
 
     var app = builder.Build();
 
