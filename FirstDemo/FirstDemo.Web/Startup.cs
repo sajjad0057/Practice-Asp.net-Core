@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Autofac.Core;
-using FirstDemo.Infrastructure.DbContexts;
+﻿using FirstDemo.Infrastructure.DbContexts;
 using FirstDemo.Web;
 using Microsoft.EntityFrameworkCore;
 
