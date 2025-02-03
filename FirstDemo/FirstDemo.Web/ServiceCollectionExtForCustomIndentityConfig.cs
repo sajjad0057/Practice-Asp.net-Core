@@ -1,7 +1,9 @@
 ﻿using FirstDemo.Infrastructure.DbContexts;
 using FirstDemo.Infrastructure.Entities.IdentityEntities;
+using FirstDemo.Infrastructure.Securities;
 using FirstDemo.Infrastructure.Services.IdentityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace FirstDemo.Web;
@@ -85,19 +87,30 @@ public static class ServiceCollectionExtForCustomIndentityConfig
 
             });
 
-            options.AddPolicy("CourseViewPolicy", policy =>
-            {
-                policy.RequireAuthenticatedUser();
-                //// here "ViewCourseClaim" is ClaimType and  "true" is value
-                policy.RequireClaim("ViewCourseClaim", "true");  //// Claim type: "ViewCourseClaim", Claim value: "true"
-            });
+            //options.AddPolicy("CourseViewPolicy", policy =>
+            //{
+            //    policy.RequireAuthenticatedUser();
+            //    //// here "ViewCourseClaim" is ClaimType and  "true" is value
+            //    policy.RequireClaim("ViewCourseClaim", "true");  //// Claim type: "ViewCourseClaim", Claim value: "true"
+            //});
 
             options.AddPolicy("CourseDeletePolicy", policy =>
             {
                 policy.RequireAuthenticatedUser();
                 policy.RequireClaim("CourseDeletClaim", "true");
             });
+
+
+            //// Another Way to Manage Claim based polices with requirment handler
+            options.AddPolicy("CourseViewRequirementPolicy", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.Requirements.Add(new CourseViewRequirement());
+            });
         });
+
+        ////Bind these for resolved CourseViewRequirementHandler.
+        services.AddSingleton<IAuthorizationHandler, CourseViewRequirementHandler>();
 
         return services; // Returning IServiceCollection allows method chaining
     }

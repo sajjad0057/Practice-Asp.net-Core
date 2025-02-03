@@ -20,7 +20,7 @@ public class CourseController : Controller
         _scope = scope;
     }
 
-    [Authorize(Policy = "CourseViewPolicy")]
+    [Authorize(Policy = "CourseViewRequirementPolicy")]
     public IActionResult Index()
     {
         return View();
@@ -34,7 +34,7 @@ public class CourseController : Controller
 
     }
 
-    [Authorize(Policy = "CourseManagementPolicy")]
+    [Authorize(Policy = "CourseViewRequirementPolicy")]
     public IActionResult Create()
     {
         CourseCreateModel model = _scope.Resolve<CourseCreateModel>();
