@@ -16,17 +16,20 @@ public class AccountController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<AccountController> _logger;
     private readonly IEmailSender _emailSender;
     private readonly ILifetimeScope _scope;
 
     public AccountController(SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
+        RoleManager<ApplicationRole> roleManager,
         ILogger<AccountController> logger,
         ILifetimeScope scope)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _roleManager = roleManager;
         _logger = logger;
         _scope = scope;
     }
@@ -56,9 +59,15 @@ public class AccountController : Controller
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
+
+            //await _roleManager.CreateAsync(new ApplicationRole("Admin"));
+            //await _roleManager.CreateAsync(new ApplicationRole("Teacher"));
+
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password.");
+
+                await _userManager.AddToRolesAsync(user, new string[] { "Teacher" });
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -144,6 +153,7 @@ public class AccountController : Controller
         return View(model);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Logout(string? returnUrl = null)
     {

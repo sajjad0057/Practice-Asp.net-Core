@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FirstDemo.Web.Areas.Admin.Controllers;
 
 [Area("Admin")]
+[Authorize(Policy = "CourseManagementPolicy")]
 
 public class CourseController : Controller
 {
