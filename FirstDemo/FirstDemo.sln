@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstDemo.Web", "FirstDemo.Web\FirstDemo.Web.csproj", "{EC1AA8CB-0BEF-4864-8E46-D82C4D255C2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstDemo.Infrastructure", "FirstDemo.Infrastructure\FirstDemo.Infrastructure.csproj", "{5A5FC472-462C-4A20-8051-F39C4FD8AE20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirstDemo.API", "FirstDemo.API\FirstDemo.API.csproj", "{DC5430CD-623A-4647-91A3-082354F94892}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{5A5FC472-462C-4A20-8051-F39C4FD8AE20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A5FC472-462C-4A20-8051-F39C4FD8AE20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A5FC472-462C-4A20-8051-F39C4FD8AE20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC5430CD-623A-4647-91A3-082354F94892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC5430CD-623A-4647-91A3-082354F94892}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC5430CD-623A-4647-91A3-082354F94892}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC5430CD-623A-4647-91A3-082354F94892}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
