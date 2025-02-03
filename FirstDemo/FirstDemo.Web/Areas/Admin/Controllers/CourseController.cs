@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace FirstDemo.Web.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize(Policy = "CourseManagementPolicy")]
-
 public class CourseController : Controller
 {
     private readonly ILifetimeScope _scope;
@@ -22,18 +20,28 @@ public class CourseController : Controller
         _scope = scope;
     }
 
+    [Authorize(Policy = "CourseViewPolicy")]
     public IActionResult Index()
     {
         return View();
     }
 
-    [Authorize]
+    public JsonResult GetCourseData()
+    {
+        var dataTableModel = new DataTablesAjaxRequestModel(Request);  //// Here Request - object is Controller class property.
+        var model = _scope.Resolve<CourseListModel>();
+        return Json(model.GetPagedCourses(dataTableModel));
+
+    }
+
+    [Authorize(Policy = "CourseManagementPolicy")]
     public IActionResult Create()
     {
         CourseCreateModel model = _scope.Resolve<CourseCreateModel>();
         return View(model);
     }
 
+    [Authorize(Policy = "CourseManagementPolicy")]
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CourseCreateModel model)
     {
@@ -102,14 +110,8 @@ public class CourseController : Controller
         return View(model);
     }
 
-    public JsonResult GetCourseData()
-    {
-        var dataTableModel = new DataTablesAjaxRequestModel(Request);  //// Here Request - object is Controller class property.
-        var model = _scope.Resolve<CourseListModel>();
-        return Json(model.GetPagedCourses(dataTableModel));
 
-    }
-
+    [Authorize(Policy = "CourseManagementPolicy")]
     public IActionResult Edit(Guid id)
     {
         CourseEditModel model = _scope.Resolve<CourseEditModel>();
@@ -117,7 +119,7 @@ public class CourseController : Controller
         return View(model);
     }
 
-
+    [Authorize(Policy = "CourseManagementPolicy")]
     [HttpPost, ValidateAntiForgeryToken]
     public IActionResult Edit(CourseEditModel model)
     {
@@ -151,6 +153,8 @@ public class CourseController : Controller
         return View(model);
     }
 
+
+    [Authorize(Policy = "CourseDeletePolicy")]
     [HttpPost, ValidateAntiForgeryToken]
     public IActionResult Delete(Guid id)
     {

@@ -19,9 +19,10 @@ builder.Host.UseSerilog((ctx, lc) => lc
 try
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-        throw new InvalidOperationException("Connection string 'DefaultConnection' not found."); ;
+        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-    var assemblyName = Assembly.GetExecutingAssembly().FullName;
+    var assemblyName = Assembly.GetExecutingAssembly().FullName ??
+        throw new InvalidOperationException("Does not found or exists assembly name");
 
     #region Autofac Configuration
 
@@ -38,7 +39,6 @@ try
 
 
     //// Creating Startup class and move all code for service config to Startup class and executing these configure through Startup class using Startup class instance 
-    //// Create `Startup` instance
     var startup = new Startup(builder.Configuration);
     
     startup.ConfigureServices(builder.Services, connectionString, assemblyName);

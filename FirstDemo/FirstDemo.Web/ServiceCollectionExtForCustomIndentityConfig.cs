@@ -10,6 +10,11 @@ public static class ServiceCollectionExtForCustomIndentityConfig
 {
     public static IServiceCollection AddCustomIdentityServices(this IServiceCollection services)
     {
+        #region ForDefaultIdentityManagement
+        ////services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        ////    .AddEntityFrameworkStores<ApplicationDbContext>();
+        #endregion
+
         // Configure Identity
         services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -59,7 +64,38 @@ public static class ServiceCollectionExtForCustomIndentityConfig
             options.AddPolicy("CourseManagementPolicy", policy =>
             {
                 policy.RequireAuthenticatedUser();
+                //// by these here perform OR operations on Roles
                 policy.RequireRole("Admin", "Teacher");
+
+                //// If need AND operation in Roles
+                //policy.RequireRole("Admin");
+                //policy.RequireRole("Teacher");
+
+            });
+
+            options.AddPolicy("CourseManagementPolicy", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                //// by these here perform OR operations on Roles
+                policy.RequireRole("Admin", "Teacher");
+
+                //// If need AND operation in Roles
+                //policy.RequireRole("Admin");
+                //policy.RequireRole("Teacher");
+
+            });
+
+            options.AddPolicy("CourseViewPolicy", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                //// here "ViewCourseClaim" is ClaimType and  "true" is value
+                policy.RequireClaim("ViewCourseClaim", "true");  //// Claim type: "ViewCourseClaim", Claim value: "true"
+            });
+
+            options.AddPolicy("CourseDeletePolicy", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+                policy.RequireClaim("CourseDeletClaim", "true");
             });
         });
 
