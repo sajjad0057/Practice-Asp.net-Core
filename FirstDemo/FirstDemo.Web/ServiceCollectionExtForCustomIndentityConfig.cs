@@ -17,6 +17,7 @@ public static class ServiceCollectionExtForCustomIndentityConfig
         ////    .AddEntityFrameworkStores<ApplicationDbContext>();
         #endregion
 
+        #region ForCustomizeIdentityManagement
         // Configure Identity
         services.AddIdentity<ApplicationUser, ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -111,6 +112,8 @@ public static class ServiceCollectionExtForCustomIndentityConfig
 
         ////Bind these for resolved CourseViewRequirementHandler.
         services.AddSingleton<IAuthorizationHandler, CourseViewRequirementHandler>();
+
+        #endregion
 
         return services; // Returning IServiceCollection allows method chaining
     }
