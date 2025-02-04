@@ -39,6 +39,11 @@ public class InfrastructureModule(string connectionString, string migrationAssem
         builder.RegisterType<CourseRepository>().As<ICourseRepository>()
             .InstancePerLifetimeScope();
 
+        ////For FirstDemo.API project - 
+
+        builder.RegisterType<TokenService>().As<ITokenService>()
+            .InstancePerLifetimeScope();
+
 
 
         base.Load(builder);

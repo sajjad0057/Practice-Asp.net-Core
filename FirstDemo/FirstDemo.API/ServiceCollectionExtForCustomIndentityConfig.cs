@@ -23,7 +23,7 @@ public static class ServiceCollectionExtForCustomIndentityConfig
         .AddSignInManager<ApplicationSignInManager>()
         .AddDefaultTokenProviders();
 
-        ////For JWT Configuration - 
+        ////For JWT Based Configuration for API project - 
         services.AddAuthentication()
         .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
         {

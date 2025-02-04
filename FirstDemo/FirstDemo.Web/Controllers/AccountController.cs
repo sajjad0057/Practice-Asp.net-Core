@@ -73,7 +73,7 @@ public class AccountController : Controller
                 //// Claim type: "ViewCourseClaim", Claim value: "true"
                 await _userManager.AddClaimsAsync(user, new Claim[]
                 {
-                        //new Claim("ViewCourseClaim", "true"),
+                        new Claim("ViewCourseClaim", "true"),
                         new Claim("CourseDeletClaim", "true")
                 });
 

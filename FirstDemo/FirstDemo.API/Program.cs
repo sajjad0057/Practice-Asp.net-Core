@@ -8,9 +8,6 @@ using FirstDemo.API;
 using FirstDemo.Infrastructure;
 
 
-
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
@@ -18,7 +15,6 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .Enrich.FromLogContext()
     .ReadFrom.Configuration(builder.Configuration));
-
 
 try
 {
@@ -29,11 +25,13 @@ try
     var assemblyName = Assembly.GetExecutingAssembly().FullName ??
         throw new InvalidOperationException("Does not found or exists assembly name");
 
+    #region Autofac Config
     builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
     builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => {
         containerBuilder.RegisterModule(new ApiModule());
         containerBuilder.RegisterModule(new InfrastructureModule(connectionString,assemblyName));
     });
+    #endregion
 
     //// Creating Startup class and move all code for service config to Startup class and executing these configure through Startup class using Startup class instance 
     var startup = new Startup(builder.Configuration);

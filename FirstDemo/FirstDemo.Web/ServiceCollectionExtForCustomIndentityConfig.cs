@@ -26,7 +26,7 @@ public static class ServiceCollectionExtForCustomIndentityConfig
             .AddSignInManager<ApplicationSignInManager>()
             .AddDefaultTokenProviders();
 
-        // Configure Cookie Authentication
+        // Configure Cookie Based Authentication for web project -
         services
             .AddAuthentication()
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
