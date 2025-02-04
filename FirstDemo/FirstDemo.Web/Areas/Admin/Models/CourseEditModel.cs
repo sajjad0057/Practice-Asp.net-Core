@@ -40,7 +40,7 @@ namespace FirstDemo.Web.Areas.Admin.Models
         {
             CourseBO course = _courseService.GetCourse(id);
 
-            if (course != null)
+            if (course is not null)
             {
                 _mapper.Map(course, this);
             }

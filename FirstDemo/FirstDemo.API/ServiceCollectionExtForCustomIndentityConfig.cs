@@ -70,6 +70,7 @@ public static class ServiceCollectionExtForCustomIndentityConfig
                 policy.RequireAuthenticatedUser();
                 policy.Requirements.Add(new CourseViewRequirement());
             });
+
         });
 
         services.AddSingleton<IAuthorizationHandler, CourseViewRequirementHandler>();

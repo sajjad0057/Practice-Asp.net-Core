@@ -58,13 +58,32 @@ public class CourseService(IMapper mapper, IApplicationUnitOfWork applicationUni
     public CourseBO GetCourse(Guid id)
     {
         var courseEO = _applicationUnitOfWork.Courses.GetById(id);
-
         return _mapper.Map<CourseBO>(courseEO);
+    }
+    public async Task<CourseBO> GetCourseAsync(Guid id)
+    {
+        var courseEO = await Task.Run(()=> _applicationUnitOfWork.Courses.GetById(id));
+        return _mapper.Map<CourseBO>(courseEO);
+    }
+
+    public async Task<IList<CourseBO>> GetCoursesAsync()
+    {
+        var coursesEO = await Task.Run(() => _applicationUnitOfWork.Courses.GetAll());
+
+        return _mapper.Map<IList<CourseBO>>(coursesEO);
     }
 
     public void EditCourse(CourseBO courseBO)
     {
+        var count = _applicationUnitOfWork.Courses.GetCount(x => x.Title == courseBO.Name);
+
+        if (count > 0)
+        {
+            throw new DuplicateException("Course Title Already Exists !");
+        }
+
         var courseEO = _applicationUnitOfWork.Courses.GetById(courseBO.Id);
+
         if(courseEO is not null)
         {
             _mapper.Map(courseBO, courseEO);

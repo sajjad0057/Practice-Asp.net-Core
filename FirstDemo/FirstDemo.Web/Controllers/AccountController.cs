@@ -74,7 +74,7 @@ public class AccountController : Controller
                 await _userManager.AddClaimsAsync(user, new Claim[]
                 {
                         new Claim("ViewCourseClaim", "true"),
-                        new Claim("CourseDeletClaim", "true")
+                        new Claim("CourseDeletClaim", "true"),
                 });
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FirstDemo.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize(Policy = "CourseViewRequirementPolicy")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]

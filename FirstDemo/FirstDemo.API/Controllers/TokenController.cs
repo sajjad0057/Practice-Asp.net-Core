@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.Json;
 using FirstDemo.Infrastructure.Entities.IdentityEntities;
 using FirstDemo.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
@@ -51,6 +52,12 @@ public class TokenController : ControllerBase
                 claims.Add(new Claim(ClaimTypes.Name, user.UserName.ToString()));
                 claims.Add(new Claim(ClaimTypes.Email, user.Email.ToString()));
 
+
+                ////Getting user roles - 
+                var roles = (await _userManager.GetRolesAsync(user)).ToList();
+
+                Console.WriteLine($"User roles : {JsonSerializer.Serialize(roles)}");
+
                 var token = await _tokenService.GetJwtToken(claims);
 
                 return Ok(token);
@@ -64,6 +71,5 @@ public class TokenController : ControllerBase
         {
             return BadRequest();
         }
-
     }
 }
