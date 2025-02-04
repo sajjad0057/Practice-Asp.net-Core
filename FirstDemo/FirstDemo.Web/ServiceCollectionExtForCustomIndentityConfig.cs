@@ -1,16 +1,19 @@
-﻿using FirstDemo.Infrastructure.DbContexts;
+﻿using System.Text;
+using FirstDemo.Infrastructure.DbContexts;
 using FirstDemo.Infrastructure.Entities.IdentityEntities;
 using FirstDemo.Infrastructure.Securities;
 using FirstDemo.Infrastructure.Services.IdentityServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FirstDemo.Web;
 
 public static class ServiceCollectionExtForCustomIndentityConfig
 {
-    public static IServiceCollection AddCustomIdentityServices(this IServiceCollection services)
+    public static IServiceCollection AddCustomIdentityServices(this IServiceCollection services, IConfiguration _configuration)
     {
         #region ForDefaultIdentityManagement
         ////services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -37,6 +40,22 @@ public static class ServiceCollectionExtForCustomIndentityConfig
                 options.Cookie.Name = "FirstDemoPortal.Identity";
                 options.SlidingExpiration = true;
                 options.ExpireTimeSpan = TimeSpan.FromHours(1);
+            })
+
+            //// For Configuring JWT Token - connecting with API project and get courses from api project
+            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidAudience = _configuration["Jwt:Audience"],
+                };
             });
 
         // Configure Identity Options
@@ -108,10 +127,22 @@ public static class ServiceCollectionExtForCustomIndentityConfig
                 policy.RequireAuthenticatedUser();
                 policy.Requirements.Add(new CourseViewRequirement());
             });
+
+            //// For authorized by JWT Token when make request to API Controller in Web Project - 
+            options.AddPolicy("ApiRequirementPolicy", policy =>
+            {
+                policy.AuthenticationSchemes.Clear();
+                policy.AuthenticationSchemes.Add(JwtBearerDefaults.AuthenticationScheme);   //// By this declare this policy authenticated by JWT not by default.
+                policy.RequireAuthenticatedUser();
+                policy.Requirements.Add(new ApiRequirement());
+            });
         });
 
-        ////Bind these for resolved CourseViewRequirementHandler.
+
+
+        ////Bind these for resolved CourseViewRequirementHandler & ApiRequirementHandler.
         services.AddSingleton<IAuthorizationHandler, CourseViewRequirementHandler>();
+        services.AddSingleton<IAuthorizationHandler, ApiRequirementHandler>();
 
         #endregion
 

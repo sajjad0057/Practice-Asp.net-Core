@@ -38,38 +38,56 @@ public class TokenController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string email, string password)
     {
-        if (email != null && password != null)
+        try
         {
-            var user = await _userManager.FindByNameAsync(email);
-            var result = await _signInManager.CheckPasswordSignInAsync(user, password, true);
-
-            if (result is not null && result.Succeeded)
+            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
             {
-                var claims = (await _userManager.GetClaimsAsync(user)).ToList();
+                var user = await _userManager.FindByNameAsync(email);
 
-                //// By this approach if need we can passing through claims list as claim extra info in users token as per as needed.
-                claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-                claims.Add(new Claim(ClaimTypes.Name, user.UserName.ToString()));
-                claims.Add(new Claim(ClaimTypes.Email, user.Email.ToString()));
+                if (user is not null)
+                {
+                    var result = await _signInManager.CheckPasswordSignInAsync(user, password, true);
+
+                    if (result != null && result.Succeeded)
+                    {
+                        var claims = (await _userManager.GetClaimsAsync(user)).ToList();
+
+                        //// By this approach if need we can passing through claims list as claim extra info in users token as per as needed.
+                        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+                        claims.Add(new Claim(ClaimTypes.Name, user.UserName.ToString()));
+                        claims.Add(new Claim(ClaimTypes.Email, user.Email.ToString()));
 
 
-                ////Getting user roles - 
-                var roles = (await _userManager.GetRolesAsync(user)).ToList();
+                        ////Getting user roles - 
+                        var roles = (await _userManager.GetRolesAsync(user)).ToList();
 
-                Console.WriteLine($"User roles : {JsonSerializer.Serialize(roles)}");
+                        Console.WriteLine($"User roles : {JsonSerializer.Serialize(roles)}");
 
-                var token = await _tokenService.GetJwtToken(claims);
+                        var token = await _tokenService.GetJwtToken(claims);
 
-                return Ok(token);
+                        return Ok(token);
+                    }
+                    else
+                    {
+                        return BadRequest("Invalid Credentials, Wrong password!");
+                    }
+
+                }
+                else
+                {
+                    return BadRequest("Invalid Credentials, Email does not exists!");
+                }
+
             }
             else
             {
                 return BadRequest("Invalid Credentials");
             }
         }
-        else
+        catch (Exception ex)
         {
-            return BadRequest();
+            throw ex;
         }
     }
 }
+

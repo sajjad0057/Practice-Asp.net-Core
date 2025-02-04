@@ -2,6 +2,7 @@
 using AutoMapper;
 using CourseBO = FirstDemo.Infrastructure.BusinessObjects.Course;
 using FirstDemo.Infrastructure.Services;
+using FirstDemo.Infrastructure.Models;
 
 namespace FirstDemo.API.Models;
 
@@ -66,5 +67,35 @@ public class CourseModel : BaseModel
     {
         _courseService.DeleteCourse(id);
         await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// For Working with Datatables from Web project
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    internal object? GetPagedCourses(DataTablesAjaxRequestModel model)
+    {
+
+        var data = _courseService?.GetCourses(
+            model.PageIndex,
+            model.PageSize,
+            model.SearchText,
+            model.GetSortText(new string[] { "Title", "Fees", "ClassStartDate" }));
+
+        return new
+        {
+            recordsTotal = data?.total,
+            recordsFiltered = data?.totalDisplay,
+            data = (from record in data?.records
+                    select new string[]
+                    {
+                                record.Name,
+                                record.Fees.ToString(),
+                                record.ClassStartDate.ToString(),
+                                record.Id.ToString()
+                    }
+                ).ToArray()
+        };
     }
 }

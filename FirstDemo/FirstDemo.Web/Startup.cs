@@ -24,7 +24,7 @@ public class Startup
 
         //using Ext. method for IServiceCollection to manage customizing identity related config
 
-        services.AddCustomIdentityServices();
+        services.AddCustomIdentityServices(_configuration);
 
         services.AddControllersWithViews();
     }

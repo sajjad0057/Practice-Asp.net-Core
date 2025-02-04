@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using FirstDemo.API.Models;
 using FirstDemo.Infrastructure.BusinessObjects;
+using FirstDemo.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,20 +22,38 @@ public class CourseController : ControllerBase
         _scope = scope;
     }
 
+
+
+    //// Here Query Parameters doesn't pass from postman so it's throw an exception
+    //// this methods invoke from datatables by web project - 
+    /// <summary>
+    /// For working with datatables from web project -
+    /// </summary>
+    /// <returns></returns>
     [HttpGet, Authorize(Policy = "CourseViewRequirementPolicy")]
-    public async Task<IEnumerable<Course>?> Get()
+    public object Get()
     {
-        try
-        {
-            var model = _scope.Resolve<CourseModel>();
-            return await model.GetCoursesAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Couldn't get courses");
-            return null;
-        }
+        var dataTablesModel = new DataTablesAjaxRequestModel(Request);
+        var model = _scope.Resolve<CourseModel>();
+        var data = model.GetPagedCourses(dataTablesModel);
+        return data;
     }
+
+
+    //[HttpGet, Authorize(Policy = "CourseViewRequirementPolicy")]
+    //public async Task<IEnumerable<Course>?> Get()
+    //{
+    //    try
+    //    {
+    //        var model = _scope.Resolve<CourseModel>();
+    //        return await model.GetCoursesAsync();
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        _logger.LogError(ex, "Couldn't get courses");
+    //        return null;
+    //    }
+    //}
 
     [HttpGet("{id}")]
     [Authorize(Policy = "CourseViewRequirementPolicy")]
