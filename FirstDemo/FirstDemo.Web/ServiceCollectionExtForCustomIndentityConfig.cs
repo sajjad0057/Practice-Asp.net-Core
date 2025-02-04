@@ -29,7 +29,7 @@ public static class ServiceCollectionExtForCustomIndentityConfig
             .AddSignInManager<ApplicationSignInManager>()
             .AddDefaultTokenProviders();
 
-        // Configure Cookie Based Authentication for web project -
+        //// Configuring Cookie Based Authentication & Autorization for web project -
         services
             .AddAuthentication()
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -42,7 +42,8 @@ public static class ServiceCollectionExtForCustomIndentityConfig
                 options.ExpireTimeSpan = TimeSpan.FromHours(1);
             })
 
-            //// For Configuring JWT Token - connecting with API project and get courses from api project
+            //// For Configuring JWT Token and JTW based Authentication & Autorization
+            //// And connecting with API project and get courses from api project
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, x =>
             {
                 x.RequireHttpsMetadata = false;
@@ -137,8 +138,6 @@ public static class ServiceCollectionExtForCustomIndentityConfig
                 policy.Requirements.Add(new ApiRequirement());
             });
         });
-
-
 
         ////Bind these for resolved CourseViewRequirementHandler & ApiRequirementHandler.
         services.AddSingleton<IAuthorizationHandler, CourseViewRequirementHandler>();

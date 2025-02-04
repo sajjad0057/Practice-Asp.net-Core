@@ -22,9 +22,21 @@ public class Startup
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         #endregion
 
-        //using Ext. method for IServiceCollection to manage customizing identity related config
 
+        #region CustomizingIndentityRelatedConfig
+        //using Ext. method for IServiceCollection to manage customizing identity related config
         services.AddCustomIdentityServices(_configuration);
+        #endregion
+
+        #region ConfiguringCookieBaseSessionForWebApp
+        //// For Configuring Cookie bassed session 
+        services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
+        #endregion
 
         services.AddControllersWithViews();
     }
@@ -46,6 +58,11 @@ public class Startup
 
         app.UseRouting();
         app.UseAuthorization();
+
+        #region ConfiguringCookieBaseSessionForWebApp
+        //// for configuring Session -
+        app.UseSession();
+        #endregion
 
         app.MapControllerRoute(
             name: "areas",

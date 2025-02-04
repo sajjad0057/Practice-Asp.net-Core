@@ -70,7 +70,12 @@
                 "serverSide" : true,
                 //// By this Url , When load this page , ajax hit this URL . for this Fire GetCourseData function in controller -
                 "ajax" : {
-                    "url": "/admin/course/GetCourseData",
+                    // "url": "/admin/course/GetCourseData",
+                    //// for retriving course data using API project
+                    "url": "https://localhost:7248/api/Course/",
+                    "headers": {
+                       "Authorization": 'Bearer @HttpContextAccessor.HttpContext.Session.GetString("token")'
+                    },
                 },
 
 

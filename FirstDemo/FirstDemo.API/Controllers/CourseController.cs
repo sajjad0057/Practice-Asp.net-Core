@@ -3,6 +3,7 @@ using FirstDemo.API.Models;
 using FirstDemo.Infrastructure.BusinessObjects;
 using FirstDemo.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,6 +12,9 @@ namespace FirstDemo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+
+//// ForEnableingCorsForAllowingSites
+[EnableCors("AllowSites")]
 public class CourseController : ControllerBase
 {
     private readonly ILifetimeScope _scope;

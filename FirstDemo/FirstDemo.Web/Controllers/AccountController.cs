@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using FirstDemo.Infrastructure.Entities.IdentityEntities;
 using System.Security.Claims;
+using FirstDemo.Infrastructure.Services;
 
 namespace FirstDemo.Web.Controllers;
 
@@ -19,18 +20,22 @@ public class AccountController : Controller
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<AccountController> _logger;
     private readonly IEmailSender _emailSender;
+    private readonly ITokenService _tokenService;
     private readonly ILifetimeScope _scope;
 
     public AccountController(SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         ILogger<AccountController> logger,
-        ILifetimeScope scope)
+        ITokenService tokenService,
+        ILifetimeScope scope
+        )
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;
+        _tokenService = tokenService;
         _scope = scope;
     }
 
@@ -139,6 +144,18 @@ public class AccountController : Controller
             if (result.Succeeded)
             {
                 _logger.LogInformation("User logged in.");
+
+                #region ForStoringJwtTokenInSessions
+
+                //// for storing JWT token in Sessions -
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
+                var token = await _tokenService.GetJwtToken(claims);
+
+                HttpContext.Session.SetString("token", token);
+
+                #endregion
+
                 return LocalRedirect(model.ReturnUrl);
             }
             if (result.RequiresTwoFactor)

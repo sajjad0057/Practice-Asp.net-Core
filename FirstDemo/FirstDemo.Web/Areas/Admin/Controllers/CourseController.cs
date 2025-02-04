@@ -31,7 +31,6 @@ public class CourseController : Controller
         var dataTableModel = new DataTablesAjaxRequestModel(Request);  //// Here Request - object is Controller class property.
         var model = _scope.Resolve<CourseListModel>();
         return Json(model.GetPagedCourses(dataTableModel));
-
     }
 
     [Authorize(Policy = "CourseViewRequirementPolicy")]

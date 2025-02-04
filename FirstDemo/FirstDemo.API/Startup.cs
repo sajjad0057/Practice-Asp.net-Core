@@ -30,8 +30,11 @@ public class Startup
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         #endregion
 
+
+        #region CustomizingIndentityRelatedConfig
         //using Ext. method for IServiceCollection to manage customizing identity related config -
         services.AddCustomIdentityServices(_configuration);
+        #endregion
 
 
         #region ForConfiguring CORS
@@ -68,8 +71,10 @@ public class Startup
 
         app.UseHttpsRedirection();
 
+        #region CorsMiddlewareConfig
         ////For configuring CORS
         app.UseCors();
+        #endregion
 
         app.UseAuthorization();
 
