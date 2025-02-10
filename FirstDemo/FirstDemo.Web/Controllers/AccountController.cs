@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Autofac;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using FirstDemo.Infrastructure.Entities.IdentityEntities;
 using System.Security.Claims;
 using FirstDemo.Infrastructure.Services;
+using System.Text.Encodings.Web;
 
 namespace FirstDemo.Web.Controllers;
 
@@ -19,7 +19,7 @@ public class AccountController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly ILogger<AccountController> _logger;
-    private readonly IEmailSender _emailSender;
+    private readonly IEmailService _emailService;
     private readonly ITokenService _tokenService;
     private readonly ILifetimeScope _scope;
 
@@ -27,6 +27,7 @@ public class AccountController : Controller
         UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         ILogger<AccountController> logger,
+        IEmailService emailService,
         ITokenService tokenService,
         ILifetimeScope scope
         )
@@ -35,6 +36,7 @@ public class AccountController : Controller
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;
+        _emailService = emailService;
         _tokenService = tokenService;
         _scope = scope;
     }
@@ -84,18 +86,23 @@ public class AccountController : Controller
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
-                pageHandler: null,
+                var callbackUrl = Url.Action("ConfirmEmail", "Account",
                     values: new { area = "", userId = user.Id, code = code, returnUrl = model.ReturnUrl },
                     protocol: Request.Scheme);
+
+                await _emailService.SendSingleEmailAsync(
+                    $"{user.UserName}",
+                    $"{user.Email}",
+                    "Confirmation Mail", 
+                    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."
+                    );
 
                 //await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                 //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                 if (_userManager.Options.SignIn.RequireConfirmedAccount)
                 {
-                    return RedirectToPage("RegisterConfirmation", new { email = model.Email, returnUrl = model.ReturnUrl });
+                    return RedirectToAction("ConfirmEmail", new { email = model.Email, returnUrl = model.ReturnUrl });
                 }
                 else
                 {
@@ -111,6 +118,12 @@ public class AccountController : Controller
 
         // If we got this far, something failed, redisplay form
         return View(model);
+    }
+
+    [AllowAnonymous]
+    public IActionResult ConfirmEmail()
+    {
+        return View();
     }
 
     public async Task<IActionResult> Login(string? returnUrl = null)

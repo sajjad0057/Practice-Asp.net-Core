@@ -44,6 +44,10 @@ public class InfrastructureModule(string connectionString, string migrationAssem
         builder.RegisterType<TokenService>().As<ITokenService>()
             .InstancePerLifetimeScope();
 
+        //// For Binding EmailServices - 
+        builder.RegisterType<HtmlEmailServive>().As<IEmailService>()
+            .InstancePerLifetimeScope();
+
 
 
         base.Load(builder);

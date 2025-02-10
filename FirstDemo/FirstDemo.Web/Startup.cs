@@ -1,4 +1,5 @@
-﻿using FirstDemo.Infrastructure.DbContexts;
+﻿using FirstDemo.Infrastructure.BusinessObjects;
+using FirstDemo.Infrastructure.DbContexts;
 using FirstDemo.Web;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,6 +37,11 @@ public class Startup
             options.Cookie.HttpOnly = true;
             options.Cookie.IsEssential = true;
         });
+        #endregion
+
+        #region ForLoadingSmtpConfigurationInSmtpModel
+        ////Load data from appsettings into a objects -
+        services.Configure<Smtp>(_configuration.GetSection("Smtp"));
         #endregion
 
         services.AddControllersWithViews();
