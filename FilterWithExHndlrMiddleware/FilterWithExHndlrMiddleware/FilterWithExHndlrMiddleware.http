@@ -1,0 +1,6 @@
+@FilterWithExHndlrMiddleware_HostAddress = http://localhost:5034
+
+GET {{FilterWithExHndlrMiddleware_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
