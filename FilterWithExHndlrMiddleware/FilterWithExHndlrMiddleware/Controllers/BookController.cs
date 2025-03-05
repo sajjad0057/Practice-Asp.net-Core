@@ -10,10 +10,10 @@ namespace FilterWithExHndlrMiddleware.Controllers;
 public class BookController : ControllerBase
 {
     [HttpPost]
-    [ValidateModelState]
     public IActionResult CreateBook([FromBody] BookDto book)
     {
-        // If ModelState is invalid, the ValidateModelStateFilter will handle the response
+        ////throw new Exception("Test Exception");
+        Console.WriteLine($"[BookController.CreateBook] -> Executed");
         return Ok(book);
     }
 }
