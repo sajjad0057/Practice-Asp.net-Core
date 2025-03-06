@@ -23,7 +23,7 @@ public class ValidationMiddleware
         {
             using var reader = new StreamReader(request.Body);
             var body = await reader.ReadToEndAsync();
-            request.Body = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(body));
+            //request.Body = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(body));
 
             // Retrieve endpoint metadata
             var endpoint = context.GetEndpoint();

@@ -21,11 +21,11 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Middleware
-app.UseMiddleware<ValidationMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseAuthorization();
+// Middleware
+app.UseMiddleware<ValidationMiddleware>();
 app.MapControllers();
 
 app.Run();
