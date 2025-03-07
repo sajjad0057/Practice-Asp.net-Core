@@ -53,6 +53,9 @@ public class ExceptionMiddleware : IMiddleware
 		context.Response.ContentType= "application/json";
 		context.Response.StatusCode = statusCode;
 
+		////For set cookies in browser :
+		context.Response.Cookies.Append("test_key", "test_value");
+
 		var x = context.Response.WriteAsync(errorResponse.ToString());
 
 		return x;
