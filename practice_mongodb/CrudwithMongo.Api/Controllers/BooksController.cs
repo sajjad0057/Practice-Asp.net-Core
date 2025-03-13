@@ -8,49 +8,49 @@ namespace CrudwithMongo.Api.Controllers;
 [Route("api/[controller]")]
 public class BooksController : ControllerBase
 {
-    private readonly BookService _bookService;
+    private readonly IBookService _bookService;
 
-    public BooksController(BookService bookService)
+    public BooksController(IBookService bookService)
     {
         _bookService = bookService;
     }
 
     [HttpGet]
-    public async Task<List<Book>> Get() => await _bookService.GetAsync();
+    public async Task<ActionResult<List<Book>>> GetAllBooks() => await _bookService.GetAllBooksAsync();
 
     [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<Book>> Get(string id)
+    public async Task<ActionResult<Book>> GetBookById(string id)
     {
-        var book = await _bookService.GetAsync(id);
+        var book = await _bookService.GetBookByIdAsync(id);
         if (book == null) return NotFound();
         return book;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(Book book)
+    public async Task<IActionResult> AddBook(Book book)
     {
-        await _bookService.CreateAsync(book);
-        return CreatedAtAction(nameof(Get), new { id = book.Id }, book);
+        await _bookService.AddBookAsync(book);
+        return CreatedAtAction(nameof(GetBookById), new { id = book.Id }, book);
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, Book book)
+    public async Task<IActionResult> UpdateBook(string id, Book book)
     {
-        var existingBook = await _bookService.GetAsync(id);
+        var existingBook = await _bookService.GetBookByIdAsync(id);
         if (existingBook == null) return NotFound();
 
         book.Id = existingBook.Id;
-        await _bookService.UpdateAsync(id, book);
+        await _bookService.UpdateBookAsync(id, book);
         return NoContent();
     }
 
     [HttpDelete("{id:length(24)}")]
-    public async Task<IActionResult> Delete(string id)
+    public async Task<IActionResult> DeleteBook(string id)
     {
-        var book = await _bookService.GetAsync(id);
+        var book = await _bookService.GetBookByIdAsync(id);
         if (book == null) return NotFound();
 
-        await _bookService.DeleteAsync(id);
+        await _bookService.DeleteBookAsync(id);
         return NoContent();
     }
 }

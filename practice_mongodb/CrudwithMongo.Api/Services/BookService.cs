@@ -1,31 +1,25 @@
-﻿namespace CrudwithMongo.Api.Services;
+﻿using CrudwithMongo.Api.Models;
+using CrudwithMongo.Api.Repositories;
 
-using CrudwithMongo.Api.Models;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+namespace CrudwithMongo.Api.Services;
 
-public class BookService
+
+public class BookService : IBookService
 {
-    private readonly IMongoCollection<Book> _booksCollection;
+    private readonly IBookRepository _bookRepository;
 
-    public BookService(IOptions<BookStoreDatabaseSettings> settings, IMongoClient mongoClient)
+    public BookService(IBookRepository bookRepository)
     {
-        var database = mongoClient.GetDatabase(settings.Value.DatabaseName);
-        _booksCollection = database.GetCollection<Book>(settings.Value.CollectionName);
+        _bookRepository = bookRepository;
     }
 
-    public async Task<List<Book>> GetAsync() =>
-        await _booksCollection.Find(_ => true).ToListAsync();
+    public async Task<List<Book>> GetAllBooksAsync() => await _bookRepository.GetAllAsync();
 
-    public async Task<Book> GetAsync(string id) =>
-        await _booksCollection.Find(book => book.Id == id).FirstOrDefaultAsync();
+    public async Task<Book> GetBookByIdAsync(string id) => await _bookRepository.GetByIdAsync(id);
 
-    public async Task CreateAsync(Book book) =>
-        await _booksCollection.InsertOneAsync(book);
+    public async Task AddBookAsync(Book book) => await _bookRepository.AddAsync(book);
 
-    public async Task UpdateAsync(string id, Book book) =>
-        await _booksCollection.ReplaceOneAsync(b => b.Id == id, book);
+    public async Task UpdateBookAsync(string id, Book book) => await _bookRepository.UpdateAsync(id, book);
 
-    public async Task DeleteAsync(string id) =>
-        await _booksCollection.DeleteOneAsync(book => book.Id == id);
+    public async Task DeleteBookAsync(string id) => await _bookRepository.DeleteAsync(id);
 }
