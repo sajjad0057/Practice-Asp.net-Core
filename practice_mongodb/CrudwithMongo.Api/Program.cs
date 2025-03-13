@@ -1,6 +1,18 @@
+using CrudwithMongo.Api.Models;
+using CrudwithMongo.Api.Services;
+using MongoDB.Driver;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.Configure<BookStoreDatabaseSettings>(
+    builder.Configuration.GetSection("MongoDB"));
+
+builder.Services.AddSingleton<IMongoClient>(
+    new MongoClient(builder.Configuration["MongoDB:ConnectionString"]));
+
+builder.Services.AddScoped<BookService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
