@@ -1,6 +1,6 @@
-﻿namespace CrudwithMongo.Api.Models;
+﻿namespace CrudwithMongo.Api.DBSettings;
 
-public class BookStoreDatabaseSettings
+public class MongoDBSettings
 {
     public string ConnectionString { get; set; } = null!;
     public string DatabaseName { get; set; } = null!;

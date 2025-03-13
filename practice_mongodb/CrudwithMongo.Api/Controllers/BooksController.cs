@@ -36,10 +36,6 @@ public class BooksController : ControllerBase
     [HttpPut("{id:length(24)}")]
     public async Task<IActionResult> UpdateBook(string id, Book book)
     {
-        var existingBook = await _bookService.GetBookByIdAsync(id);
-        if (existingBook == null) return NotFound();
-
-        book.Id = existingBook.Id;
         await _bookService.UpdateBookAsync(id, book);
         return NoContent();
     }
@@ -47,9 +43,6 @@ public class BooksController : ControllerBase
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> DeleteBook(string id)
     {
-        var book = await _bookService.GetBookByIdAsync(id);
-        if (book == null) return NotFound();
-
         await _bookService.DeleteBookAsync(id);
         return NoContent();
     }

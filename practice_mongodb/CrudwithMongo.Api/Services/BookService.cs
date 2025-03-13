@@ -6,9 +6,9 @@ namespace CrudwithMongo.Api.Services;
 
 public class BookService : IBookService
 {
-    private readonly IBookRepository _bookRepository;
+    private readonly IRepository<Book> _bookRepository;
 
-    public BookService(IBookRepository bookRepository)
+    public BookService(IRepository<Book> bookRepository)
     {
         _bookRepository = bookRepository;
     }
